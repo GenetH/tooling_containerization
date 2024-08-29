@@ -62,9 +62,12 @@ pipeline {
             steps {
                 script {
                     // Test if tooling site HTTP endpoint returns status code 200
-                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:5001", returnStdout: true).trim()
-                    if (response != '200') {
-                        error "Smoke test failed with status code ${response}"
+                    retry(3) {
+                        sleep(time: 10, unit: 'SECONDS')
+                        def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:5002", returnStdout: true).trim()
+                        if (response != '200') {
+                            error "Smoke test failed with status code ${response}"
+                        }
                     }
                 }
             }
@@ -76,8 +79,8 @@ pipeline {
                     // Tag and push Docker image
                     withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh """
-                        echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin ${DOCKER_REGISTRY}
-                        docker tag ${DOCKER_IMAGE}:${env.TAG_NAME} ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${env.TAG_NAME}
+                        echo "\$PASSWORD" | docker login -u "\$USERNAME" --password-stdin ${DOCKER_REGISTRY}
+                        docker tag tooling_containerization_main-frontend ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${env.TAG_NAME}
                         docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${env.TAG_NAME}
                         """
                     }
