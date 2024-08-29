@@ -41,7 +41,7 @@ pipeline {
 
                     // Build Docker image with a dynamic tag based on branch name
                     sh """
-                    docker-compose -f ${COMPOSE_FILE} build --build-arg TAG_NAME=${env.TAG_NAME}
+                    docker-compose -f ${COMPOSE_FILE} build
                     """
                 }
             }
@@ -70,10 +70,10 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Tag and Push Docker Image') {
             steps {
                 script {
-                    // Use Jenkins credentials to login to Docker and push the image
+                    // Tag and push Docker image
                     withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh """
                         echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin ${DOCKER_REGISTRY}
@@ -106,14 +106,14 @@ pipeline {
                 }
             }
         }
+    }
 
-        stage ('logout Docker') {
-            steps {
-                script {
-                    sh " docker logout"
-                }
+    post {
+        always {
+            script {
+                // Logout from Docker
+                sh 'docker logout'
             }
         }
     }
-
 }
