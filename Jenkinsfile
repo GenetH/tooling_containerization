@@ -96,7 +96,7 @@ pipeline {
             }
         }
 
-        stage('Cleanup Docker Images') {
+        stage('Cleanup') {
             steps {
                 script {
                     // Clean up Docker images to save space
@@ -106,11 +106,13 @@ pipeline {
                 }
             }
         }
-    }
 
-    post {
-        always {
-            sh 'docker logout'
+        stage ('logout Docker') {
+            steps {
+                script {
+                    sh " docker logout"
+                }
+            }
         }
     }
 }
