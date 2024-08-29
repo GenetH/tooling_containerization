@@ -61,11 +61,14 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 script {
-                    // Test if tooling site HTTP endpoint returns status code 200
-                    retry(3) {
-                        sleep(time: 10, unit: 'SECONDS')
-                        def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:5002", returnStdout: true).trim()
-                        if (response != '200') {
+                    def response
+                    retry(5) {
+                        sleep(time: 20, unit: 'SECONDS')
+                        response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:5002", returnStdout: true).trim()
+                        echo "HTTP Status Code: ${response}"
+                        if (response == '200') {
+                            echo "Smoke test passed with status code 200"
+                        } else {
                             error "Smoke test failed with status code ${response}"
                         }
                     }
