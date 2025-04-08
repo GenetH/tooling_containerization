@@ -50,27 +50,24 @@ pipeline {
             }
         }
 
-        stage('Tag and Push Docker Image') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Tag and push Docker image
-                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh """
-                        echo "\$PASSWORD" | docker login -u "\$USERNAME" --password-stdin ${DOCKER_REGISTRY}
-                        docker tag tooling_containerization_main-frontend ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${env.TAG_NAME}
-                        docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${env.TAG_NAME}
-                        """
-                    }
+                    sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+                    sh "docker push ${DOCKER_HUB_REPO}:${env.BRANCH_NAME}${env.BUILD_NUMBER}"
                 }
             }
         }
+    
+
+
 
         stage('Stop and Remove Containers') {
             steps {
                 script {
                     // Stop and remove Docker containers
                     sh """
-                    docker-compose -f ${COMPOSE_FILE} down
+                    docker-compose -f tooling.yml down
                     """
                 }
             }
@@ -81,7 +78,7 @@ pipeline {
                 script {
                     // Clean up Docker images to save space
                     sh """
-                    docker rmi ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${env.TAG_NAME} || true
+                    docker rmi ${DOCKER_HUB_REPO}:${env.BRANCH_NAME}${env.BUILD_NUMBER} || true
                     """
                 }
             }
