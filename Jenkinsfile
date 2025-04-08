@@ -14,30 +14,10 @@ pipeline {
                 }
             }
         }
-     }
-    parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
-    }
 
-    stages {
-        stage('Initial cleanup') {
+        stage('Checkout') {
             steps {
-                dir("${WORKSPACE}") {
-                    deleteDir()
-                }
-            }
-        }
-
-        stage('SCM Checkout') {
-            steps {
-                script {
-                    // Dynamically select the branch based on the parameter
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: "${params.BRANCH_NAME}"]],
-                        userRemoteConfigs: [[url: 'https://github.com/GenetH/tooling_containerization.git']]
-                    ])
-                }
+                checkout scm
             }
         }
 
