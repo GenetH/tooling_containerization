@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Start services using Docker Compose
                     sh """
-                    docker-compose -f tooling.yml up 
+                    docker-compose -f tooling.yml up -d
                     """
                 }
             }
