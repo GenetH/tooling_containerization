@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Start services using Docker Compose
                     sh """
-                    docker-compose -f tooling.yml up -d
+                    docker-compose -f tooling.yml up 
                     """
                 }
             }
@@ -54,6 +54,7 @@ pipeline {
             steps {
                 script {
                     sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+                    sh "docker tag tooling_containerization_main-frontend ${DOCKER_HUB_REPO}:${env.BRANCH_NAME}${env.BUILD_NUMBER}"
                     sh "docker push ${DOCKER_HUB_REPO}:${env.BRANCH_NAME}${env.BUILD_NUMBER}"
                 }
             }
