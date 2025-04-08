@@ -8,26 +8,17 @@ services:
     volumes:
       - tooling_frontend:/var/www/html
     depends_on:
-      db:
-        condition: service_healthy
-
+     - db
   db:
     image: mysql:8.0
     restart: always
     environment:
       MYSQL_DATABASE: toolingdb
-      MYSQL_USER: francis
+      MYSQL_USER: genet
       MYSQL_PASSWORD: Admin1234
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
       - db:/var/lib/mysql
-      - ./html/tooling_db_schema.sql:/docker-entrypoint-initdb.d/tooling_db_schema.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
 volumes:
   tooling_frontend:
   db:

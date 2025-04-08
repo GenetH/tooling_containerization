@@ -1,3 +1,3 @@
-CREATE USER 'francis' @'%' IDENTIFIED BY 'Admin1234';
+CREATE USER 'genet' @'%' IDENTIFIED BY 'Admin1234';
 
-GRANT ALL PRIVILEGES ON * . * TO 'francis'@'%';
+GRANT ALL PRIVILEGES ON * . * TO 'genet'@'%';

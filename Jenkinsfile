@@ -2,10 +2,18 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY = "docker.io"
-        DOCKER_IMAGE = "francdocmain/tooling-app"
-        COMPOSE_FILE = "tooling.yml"
+        DOCKER_HUB_REPO = 'genih/php-todo-app'
+    
     }
+
+     stages {
+        stage("Initial cleanup") {
+            steps {
+                dir("${WORKSPACE}") {
+                    deleteDir()
+                }
+            }
+        }
 
     parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
@@ -27,7 +35,7 @@ pipeline {
                     checkout([
                         $class: 'GitSCM',
                         branches: [[name: "${params.BRANCH_NAME}"]],
-                        userRemoteConfigs: [[url: 'https://github.com/francdomain/tooling_containerization.git']]
+                        userRemoteConfigs: [[url: 'https://github.com/GenetH/tooling_containerization.git']]
                     ])
                 }
             }
@@ -64,7 +72,7 @@ pipeline {
                     def response
                     retry(5) {
                         sleep(time: 20, unit: 'SECONDS')
-                        response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:5002", returnStdout: true).trim()
+                        response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:5000", returnStdout: true).trim()
                         echo "HTTP Status Code: ${response}"
                         if (response == '200') {
                             echo "Smoke test passed with status code 200"
