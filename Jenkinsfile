@@ -21,26 +21,12 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def branchName = params.BRANCH_NAME
-                    env.TAG_NAME = branchName == 'main' ? 'latest' : "${branchName}-0.0.${env.BUILD_NUMBER}"
-
-                    // Build Docker image with a dynamic tag based on branch name
-                    sh """
-                    docker-compose -f ${COMPOSE_FILE} build
-                    """
-                }
-            }
-        }
-
-        stage('Run Docker Compose') {
+      stage('Run Docker Compose') {
             steps {
                 script {
                     // Start services using Docker Compose
                     sh """
-                    docker-compose -f ${COMPOSE_FILE} up -d
+                    docker-compose -f tooling.yml up -d
                     """
                 }
             }
