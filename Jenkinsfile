@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = 'genih/php-todo-app'
+        DOCKER_HUB_REPO = 'genih/tooling-app'
     
     }
 
