@@ -14,7 +14,7 @@ pipeline {
                 }
             }
         }
-
+     }
     parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
     }
